@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import Problem from '../components/Problem';
@@ -18,6 +18,10 @@ export default function Home() {
     damping: 30,
     restDelta: 0.001
   });
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="relative min-h-screen bg-background selection:bg-primary/30">

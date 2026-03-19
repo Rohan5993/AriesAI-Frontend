@@ -75,12 +75,12 @@ const FeatureShowcase3D = () => {
             viewport={{ once: true }}
             className="md:col-span-4 glass rounded-[2.5rem] p-8 flex flex-col justify-between group overflow-hidden relative"
           >
-            <div className="h-48 relative">
-              <Canvas camera={{ position: [0, 0, 4] }}>
-                <ambientLight intensity={0.5} />
-                <pointLight position={[10, 10, 10]} />
-                <Shape3D type="torus" color="#8b5cf6" />
-              </Canvas>
+            <div className="h-48 relative flex items-center justify-center">
+              <img 
+                src="/icon.webp" 
+                alt="Campaign Orchestration Icon" 
+                className="w-32 h-32 md:w-40 md:h-40 object-contain group-hover:scale-110 transition-transform duration-500"
+              />
             </div>
             <div>
               <h3 className="text-2xl font-bold mb-3 flex items-center gap-2">
@@ -212,12 +212,12 @@ const FeatureShowcase3D = () => {
             transition={{ delay: 0.3 }}
             className="md:col-span-4 glass rounded-[2.5rem] p-8 flex flex-col justify-between group overflow-hidden relative"
           >
-            <div className="h-48 relative">
-              <Canvas camera={{ position: [0, 0, 4] }}>
-                <ambientLight intensity={0.5} />
-                <pointLight position={[10, 10, 10]} />
-                <Shape3D type="cone" color="#ec4899" />
-              </Canvas>
+            <div className="h-48 relative flex items-center justify-center">
+              <img 
+                src="/cube-icon.webp" 
+                alt="AI Content Engine Icon" 
+                className="w-32 h-32 md:w-40 md:h-40 object-contain group-hover:scale-110 transition-transform duration-500"
+              />
             </div>
             <div>
               <h3 className="text-2xl font-bold mb-3 flex items-center gap-2">

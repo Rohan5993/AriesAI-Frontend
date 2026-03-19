@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, useScroll, useTransform, useSpring } from 'motion/react';
 import { ArrowRight, Play, Sparkles, BarChart3, Share2, Facebook, Twitter, Instagram, Linkedin, Youtube, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -11,40 +12,42 @@ const Hero = () => {
     offset: ["start start", "end start"]
   });
 
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
+  // Disabled useSpring to prevent initial animation glitches on reload while scrolled
+  const smoothProgress = scrollYProgress;
 
   const [windowSize, setWindowSize] = useState({ 
-    width: typeof document !== 'undefined' ? document.documentElement.clientWidth : 1280, 
+    width: typeof window !== 'undefined' ? window.innerWidth : 1280, 
     height: typeof window !== 'undefined' ? window.innerHeight : 800 
   });
 
   useEffect(() => {
     const handleResize = () => setWindowSize({ 
-      width: document.documentElement.clientWidth, 
+      width: window.innerWidth, 
       height: window.innerHeight 
     });
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const radiusMultiplier = windowSize.width < 768 ? 0.45 : windowSize.width < 1024 ? 0.7 : 1;
+
   // Calculate exact starting position of the navbar logo
   // Navbar has px-6 (24px padding). Inner container is max-w-7xl (1280px).
-  const navbarLogoX = Math.max(24, (windowSize.width - 1280) / 2) + 16; // +16 for half of 32px width
-  const navbarLogoY = 32; // Exact center Y of navbar logo (16px padding + 16px half height)
+  const navbarLogoX = Math.max(24, (windowSize.width - 1280) / 2) + 48; // +48 for half of 96px width
+  const navbarLogoY = 64; // Exact center Y of navbar logo (16px padding + 48px half height)
 
   // Center of screen is windowSize.width / 2
   const startX = navbarLogoX - windowSize.width / 2;
   const startY = navbarLogoY - windowSize.height / 2;
 
-  // Animation values
-  const logoX = useTransform(smoothProgress, [0, 0.15, 0.3, 0.5, 0.95, 1], [startX, startX, 0, 0, startX, startX]);
-  const logoY = useTransform(smoothProgress, [0, 0.15, 0.3, 0.5, 0.95, 1], [startY, startY, 0, 0, startY, startY]);
-  const logoScale = useTransform(smoothProgress, [0, 0.15, 0.3, 0.5, 0.95, 1], [1, 1, 1.5625, 1.5625, 0.5, 0.5]);
-  const logoOpacity = useTransform(smoothProgress, [0, 0.95, 1], [1, 1, 0]);
+  const startScrolledY = 60 - windowSize.height / 2;
+
+  // Animation values - make it a smooth continuous travel from the start
+  const logoX = useTransform(smoothProgress, [0, 0.25, 0.45, 0.75, 1], [startX, 0, 0, startX, startX]);
+  const logoY = useTransform(smoothProgress, [0, 0.25, 0.45, 0.75, 1], [startY, 0, 0, startScrolledY, startScrolledY]);
+  const logoScale = useTransform(smoothProgress, [0, 0.25, 0.45, 0.75, 1], [1, 1.333 * radiusMultiplier, 1.333 * radiusMultiplier, 1, 1]);
+  const logoOpacity = useTransform(smoothProgress, [0, 0.74, 0.75], [1, 1, 0]);
+  const pulseBlockOpacity = useTransform(smoothProgress, [0, 0.1, 0.25, 0.45, 0.6, 0.75], [0, 0, 1, 1, 0, 0]);
   
   const centralCircleOpacity = useTransform(smoothProgress, [0, 0.05, 0.15, 0.5, 0.6], [0, 0, 1, 1, 0]);
   const centralCircleScale = useTransform(smoothProgress, [0, 0.05, 0.15, 0.5, 0.6], [0.5, 0.5, 1, 1, 0.5]);
@@ -54,12 +57,12 @@ const Hero = () => {
   const dashOffset = useTransform(smoothProgress, [0, 1], [0, -500]); // Flows towards platforms on scroll
 
   const platforms = [
-    { icon: Twitter, angle: 180, radius: 180 }, // Orbit 1 (1 platform)
-    { icon: Instagram, angle: 60, radius: 300 }, // Orbit 2
-    { icon: Linkedin, angle: 240, radius: 300 }, // Orbit 2
-    { icon: Facebook, angle: 0, radius: 420 },   // Orbit 3
-    { icon: Youtube, angle: 120, radius: 420 },  // Orbit 3
-    { icon: MessageCircle, angle: 300, radius: 420 }, // Orbit 3
+    { icon: Twitter, angle: 180, radius: 180 * radiusMultiplier }, // Orbit 1 (1 platform)
+    { icon: Instagram, angle: 60, radius: 300 * radiusMultiplier }, // Orbit 2
+    { icon: Linkedin, angle: 240, radius: 300 * radiusMultiplier }, // Orbit 2
+    { icon: Facebook, angle: 0, radius: 420 * radiusMultiplier },   // Orbit 3
+    { icon: Youtube, angle: 120, radius: 420 * radiusMultiplier },  // Orbit 3
+    { icon: MessageCircle, angle: 300, radius: 420 * radiusMultiplier }, // Orbit 3
   ];
 
   return (
@@ -158,7 +161,10 @@ const Hero = () => {
                 <div 
                   key={i}
                   className="absolute rounded-full border border-white/5"
-                  style={{ width: r * 2, height: r * 2 }}
+                  style={{ 
+                    width: r * 2 * radiusMultiplier, 
+                    height: r * 2 * radiusMultiplier 
+                  }}
                 />
               ))}
             </motion.div>
@@ -168,10 +174,18 @@ const Hero = () => {
               style={{
                 opacity: centralCircleOpacity,
                 scale: centralCircleScale,
+                width: 160 * radiusMultiplier,
+                height: 160 * radiusMultiplier,
               }}
-              className="w-40 h-40 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm flex items-center justify-center"
+              className="rounded-full border border-white/10 bg-white/5 backdrop-blur-sm flex items-center justify-center"
             >
-              <div className="w-28 h-28 rounded-full border border-primary/20 animate-pulse" />
+              <div 
+                className="rounded-full border border-primary/20 animate-pulse" 
+                style={{
+                  width: 112 * radiusMultiplier,
+                  height: 112 * radiusMultiplier,
+                }}
+              />
             </motion.div>
 
             {/* Connection Lines (Centralized) */}
@@ -289,8 +303,20 @@ const Hero = () => {
                     }}
                     className="relative"
                   >
-                    <div className="w-20 h-20 rounded-full bg-white/5 border border-white/10 backdrop-blur-md flex items-center justify-center shadow-2xl shadow-white/5 relative z-10">
-                      <platform.icon className="w-10 h-10 text-white" />
+                    <div 
+                      className="rounded-full bg-white/5 border border-white/10 backdrop-blur-md flex items-center justify-center shadow-2xl shadow-white/5 relative z-10"
+                      style={{ 
+                        width: 80 * radiusMultiplier, 
+                        height: 80 * radiusMultiplier 
+                      }}
+                    >
+                      <platform.icon 
+                        className="text-white" 
+                        style={{ 
+                          width: 40 * radiusMultiplier, 
+                          height: 40 * radiusMultiplier 
+                        }} 
+                      />
                     </div>
                     {/* Platform Pulse */}
                     <motion.div 
@@ -304,32 +330,44 @@ const Hero = () => {
             </motion.div>
 
             {/* Moving Logo */}
-            <motion.div
-              style={{
-                x: logoX,
-                y: logoY,
-                scale: logoScale,
-                opacity: logoOpacity,
-                position: 'fixed',
-                top: '50%',
-                left: '50%',
-                marginTop: '-16px',
-                marginLeft: '-16px',
-              }}
-              className="z-[60]"
-            >
-              <div className="relative">
-                <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center font-bold text-white shadow-lg shadow-primary/20 border border-white/20 relative z-10">
-                  A
+            {typeof document !== 'undefined' && createPortal(
+              <motion.div
+                style={{
+                  x: logoX,
+                  y: logoY,
+                  scale: logoScale,
+                  opacity: logoOpacity,
+                  position: 'fixed',
+                  top: '50%',
+                  left: '50%',
+                  marginTop: -48,
+                  marginLeft: -48,
+                  zIndex: 9999,
+                }}
+                className="pointer-events-none"
+              >
+                <div className="relative">
+                  <img 
+                    src="/ariesai-logo.png" 
+                    alt="Aries AI Logo" 
+                    className="object-contain relative z-10"
+                    style={{
+                      width: 96,
+                      height: 96
+                    }}
+                  />
+                  {/* Central Pulse */}
+                  <motion.div style={{ opacity: pulseBlockOpacity }} className="absolute inset-0">
+                    <motion.div 
+                      className="absolute inset-0 rounded-lg border-2 border-primary/50"
+                      animate={{ scale: [1, 2], opacity: [0.8, 0] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
+                    />
+                  </motion.div>
                 </div>
-                {/* Central Pulse */}
-                <motion.div 
-                  className="absolute inset-0 rounded-lg border-2 border-primary/50"
-                  animate={{ scale: [1, 2], opacity: [0.8, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
-                />
-              </div>
-            </motion.div>
+              </motion.div>,
+              document.body
+            )}
           </div>
         </div>
 
