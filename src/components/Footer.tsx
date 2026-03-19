@@ -9,10 +9,8 @@ const Footer = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-12 mb-16">
           <div className="col-span-2">
             <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center font-bold text-white">
-                A
-              </div>
-              <span className="text-xl font-bold tracking-tight">Aries AI</span>
+              <img src="/ariesai-logo.png" alt="Aries AI Logo" className="w-16 h-16 object-contain" />
+              <span className="text-xl font-bold tracking-[0.1em] uppercase">ARIES AI</span>
             </div>
             <p className="text-white/50 max-w-xs mb-8">
               The world's first autonomous marketing intelligence system. Scale your growth with AI.

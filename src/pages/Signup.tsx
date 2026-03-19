@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { ArrowLeft, ArrowRight, Mail, Lock, Sparkles, Slack } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Mail, Lock, Sparkles, User, Building2, Slack } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-export default function Login() {
+export default function Signup() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [org, setOrg] = useState('');
   const [password, setPassword] = useState('');
 
   return (
-    <div className="min-h-screen bg-background flex flex-col justify-center relative overflow-hidden selection:bg-primary/30">
+    <div className="min-h-screen bg-background flex flex-col justify-center relative overflow-hidden selection:bg-primary/30 py-12">
       {/* Background Effects */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] animate-pulse" />
@@ -26,7 +28,7 @@ export default function Login() {
             <span>Back to Home</span>
           </Link>
 
-          {/* Login Card */}
+          {/* Signup Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -44,11 +46,28 @@ export default function Login() {
                   className="w-full h-full object-contain"
                 />
               </div>
-              <h1 className="text-3xl font-bold mb-2">Welcome Back</h1>
-              <p className="text-white/60">Sign in to your Aries AI account</p>
+              <h1 className="text-3xl font-bold mb-2">Create Account</h1>
+              <p className="text-white/60">Join Aries AI and start automating</p>
             </div>
 
-            <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+              <div>
+                <label className="block text-sm font-medium text-white/80 mb-1.5">Full Name</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User className="h-5 w-5 text-white/40" />
+                  </div>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="block w-full pl-10 pr-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent transition-all"
+                    placeholder="John Doe"
+                    required
+                  />
+                </div>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-white/80 mb-1.5">Email Address</label>
                 <div className="relative">
@@ -67,10 +86,25 @@ export default function Login() {
               </div>
 
               <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-sm font-medium text-white/80">Password</label>
-                  <a href="#" className="text-sm text-primary hover:text-primary/80 transition-colors">Forgot password?</a>
+                <label className="block text-sm font-medium text-white/80 mb-1.5">
+                  Organization Name <span className="text-white/30 text-xs">(Optional)</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Building2 className="h-5 w-5 text-white/40" />
+                  </div>
+                  <input
+                    type="text"
+                    value={org}
+                    onChange={(e) => setOrg(e.target.value)}
+                    className="block w-full pl-10 pr-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent transition-all"
+                    placeholder="Acme Corp"
+                  />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white/80 mb-1.5">Password</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Lock className="h-5 w-5 text-white/40" />
@@ -86,13 +120,15 @@ export default function Login() {
                 </div>
               </div>
 
-              <button
-                type="submit"
-                className="w-full py-3 px-4 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white font-medium rounded-xl transition-all shadow-[0_0_20px_rgba(124,58,237,0.3)] hover:shadow-[0_0_30px_rgba(124,58,237,0.5)] flex items-center justify-center gap-2"
-              >
-                Sign In
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  className="w-full py-3 px-4 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white font-medium rounded-xl transition-all shadow-[0_0_20px_rgba(124,58,237,0.3)] hover:shadow-[0_0_30px_rgba(124,58,237,0.5)] flex items-center justify-center gap-2"
+                >
+                  Register
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
             </form>
 
             <div className="mt-8">
@@ -101,7 +137,7 @@ export default function Login() {
                   <div className="w-full border-t border-white/10"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-background/80 backdrop-blur-sm text-white/40">Or continue with</span>
+                  <span className="px-2 bg-background/80 backdrop-blur-sm text-white/40">Signup using</span>
                 </div>
               </div>
 
@@ -123,9 +159,9 @@ export default function Login() {
             </div>
 
             <p className="mt-8 text-center text-sm text-white/60">
-              Don't have an account?{' '}
-              <Link to="/signup" className="font-medium text-primary hover:text-primary/80 transition-colors">
-                create one
+              Already have an account?{' '}
+              <Link to="/login" className="font-medium text-primary hover:text-primary/80 transition-colors">
+                Sign In
               </Link>
             </p>
           </motion.div>
